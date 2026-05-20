@@ -40,4 +40,4 @@ jobs:
       - name: cargo test (init-system-macros only)
         # init-system tests require Godot native libs to link; cannot run headless.
         # simple_usage_test.rs uses GodotClass derive at module level — uncompilable without Godot.
-        run: cargo test -p init-system-macros
+        run: cargo test -p gd-init-system-macros
