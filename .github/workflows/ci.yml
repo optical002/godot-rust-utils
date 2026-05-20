@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: ["**"]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  check:
+    name: Check & Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy
+
+      - name: Cache cargo
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: ${{ runner.os }}-cargo-
+
+      - name: cargo check (all crates)
+        run: cargo check --workspace
+
+      - name: cargo clippy (all crates)
+        run: cargo clippy --workspace -- -D warnings
+
+      - name: cargo test (init-system-macros only)
+        # init-system tests require Godot native libs to link; cannot run headless.
+        # simple_usage_test.rs uses GodotClass derive at module level — uncompilable without Godot.
+        run: cargo test -p init-system-macros

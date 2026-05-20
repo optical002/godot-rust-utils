@@ -1,0 +1,12 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/init-system",
+    "crates/init-system-macros",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+license = "MIT"
+repository = "https://github.com/optical002/godot-rust-utils"

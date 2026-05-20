@@ -1,0 +1,17 @@
+[package]
+name = "init-system-macros"
+version.workspace = true
+edition.workspace = true
+description = "Procedural macros for the init-system Godot Rust utility crate."
+license.workspace = true
+repository.workspace = true
+keywords = ["godot", "gamedev", "proc-macro", "init-system"]
+categories = ["game-development", "development-tools::procedural-macro-helpers"]
+
+[lib]
+proc-macro = true
+
+[dependencies]
+syn = { version = "2.0", features = ["full"] }
+quote = "1.0"
+proc-macro2 = "1.0"

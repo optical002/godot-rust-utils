@@ -1,0 +1,63 @@
+name: Publish to crates.io
+
+on:
+  push:
+    tags:
+      - "init-system-v*"
+      - "init-system-macros-v*"
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  publish:
+    name: Publish crate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache cargo
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+          key: ${{ runner.os }}-cargo-publish-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: Determine crate from tag
+        id: crate
+        run: |
+          TAG="${GITHUB_REF#refs/tags/}"
+          if [[ "$TAG" == init-system-macros-v* ]]; then
+            echo "target=init-system-macros" >> "$GITHUB_OUTPUT"
+          elif [[ "$TAG" == init-system-v* ]]; then
+            echo "target=init-system" >> "$GITHUB_OUTPUT"
+          else
+            echo "Unrecognized tag: $TAG" && exit 1
+          fi
+
+      - name: Publish init-system-macros
+        if: steps.crate.outputs.target == 'init-system-macros'
+        working-directory: crates/init-system-macros
+        run: cargo publish --token "${{ secrets.CARGO_REGISTRY_TOKEN }}"
+
+      - name: Wait for init-system-macros on crates.io
+        if: steps.crate.outputs.target == 'init-system-macros'
+        run: |
+          VERSION=$(grep '^version' crates/init-system-macros/Cargo.toml | grep -v workspace | sed 's/.*"\(.*\)"/\1/')
+          for i in $(seq 1 20); do
+            STATUS=$(curl -sf "https://crates.io/api/v1/crates/init-system-macros/$VERSION" \
+              -H "User-Agent: godot-rust-utils-ci" | python3 -c \
+              "import sys,json; d=json.load(sys.stdin); print('ok' if 'version' in d else 'no')" 2>/dev/null || echo "no")
+            [ "$STATUS" = "ok" ] && echo "Available." && break
+            echo "Attempt $i: not yet available, sleeping 15s..."
+            sleep 15
+          done
+
+      - name: Publish init-system
+        if: steps.crate.outputs.target == 'init-system'
+        working-directory: crates/init-system
+        run: cargo publish --token "${{ secrets.CARGO_REGISTRY_TOKEN }}"
