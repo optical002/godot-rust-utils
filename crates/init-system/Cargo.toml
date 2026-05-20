@@ -1,5 +1,5 @@
 [package]
-name = "init-system"
+name = "gd-init-system"
 version = "0.1.0"
 edition = "2024"
 description = "A lifecycle and initialization system for Godot 4 games built with godot-rust."
@@ -12,7 +12,7 @@ categories = ["game-development"]
 name = "init_system"
 
 [dependencies]
-init-system-macros = { path = "../init-system-macros", version = "0.1.0" }
+gd-init-system-macros = { path = "../init-system-macros", version = "0.1.0" }
 godot = "0.5.0"
 tracing = "0.1.44"
 serde = { version = "1.0", features = ["derive"] }

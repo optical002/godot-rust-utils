@@ -72,6 +72,27 @@ dependencies = [
 ]
 
 [[package]]
+name = "gd-init-system"
+version = "0.1.0"
+dependencies = [
+ "bincode",
+ "gd-init-system-macros",
+ "godot",
+ "serde",
+ "tracing",
+ "uuid",
+]
+
+[[package]]
+name = "gd-init-system-macros"
+version = "0.1.0"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
 name = "gdextension-api"
 version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -207,27 +228,6 @@ dependencies = [
  "hashbrown 0.17.1",
  "serde",
  "serde_core",
-]
-
-[[package]]
-name = "init-system"
-version = "0.1.0"
-dependencies = [
- "bincode",
- "godot",
- "init-system-macros",
- "serde",
- "tracing",
- "uuid",
-]
-
-[[package]]
-name = "init-system-macros"
-version = "0.1.0"
-dependencies = [
- "proc-macro2",
- "quote",
- "syn",
 ]
 
 [[package]]

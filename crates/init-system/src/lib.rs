@@ -4,4 +4,4 @@ pub mod interfaces;
 pub mod nodes;
 pub mod prelude;
 
-pub use init_system_macros::init;
+pub use gd_init_system_macros::init;
